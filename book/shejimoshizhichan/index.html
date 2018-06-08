@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+#content {
+	width: 100%;
+	height: 550px;
+	border: 1px dashed blue;
+}
+
+iframe {
+	border: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#paging button {
+	width: 150px;
+	margin: 5px 10px;
+}
+</style>
+<title></title>
+</head>
+<body>
+
+	<div>
+		<h4 align="center" id="title"></h4>
+	</div>
+	<div id="content">
+		<iframe id="main" src="Text/part0000.xhtml"></iframe>
+	</div>
+
+	<div id="paging" align="center">
+		<button onclick="before()">上一章</button>
+		<button onclick="after()">下一章</button>
+	</div>
+
+
+</body>
+
+<script type="text/javascript">
+	var object = {
+		title : '设计模式之禅',
+		min : 0,
+		max : 166
+	};
+	document.title = object.title;
+	document.getElementById('title').innerHTML = object.title;
+
+	function before() {
+		var page = getPage();
+		if (page > object.min) {
+			page--;
+		}
+		setPage(page);
+	}
+
+	function after() {
+		var page = getPage();
+		if (page < object.max) {
+			page++;
+		}
+		setPage(page);
+	}
+
+	function getFrame() {
+		return document.getElementById('main');
+	}
+
+	function getPage() {
+		var src = getFrame().src;
+		return parseInt(src.substr(src.lastIndexOf('.') - 3, 3));
+	}
+
+	function setPage(page) {
+		if (page < 10) {
+			page = '00' + page;
+		} else if (page < 100) {
+			page = '0' + page;
+		}
+		getFrame().src = "Text/part0" + page + ".xhtml";
+	}
+</script>
+</html>

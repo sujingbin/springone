@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" style="font-size:1.250rem;"><head>
+  <link href="../Styles/style0001.css" rel="stylesheet" type="text/css"/>
+
+  <title></title>
+</head><body>
+  <h3 class="p3" id="sigil_toc_id_35">7.2 单例模式的定义</h3>
+
+  <p class="ziti">单例模式（Singleton Pattern）是一个比较简单的模式，其定义如下：</p>
+
+  <p class="ziti">Ensure a class has only one instance, and provide a global point of access to it.（确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。）</p>
+
+  <p class="ziti">单例模式的通用类图如图7-2所示。</p>
+
+  <p class="pic"><img alt="" src="../Images/image00386.jpeg"/></p>
+
+  <p class="middle-img">图7-2 单例模式通用类图</p>
+
+  <p class="ziti">Singleton类称为单例类，通过使用private的构造函数确保了在一个应用中只产生一个实例，并且是自行实例化的（在Singleton中自己使用new Singleton()）。单例模式的通用源代码如代码清单7-3所示。</p>
+
+  <p class="ziti">代码清单7-3 单例模式通用代码</p>
+  <pre>public class Singleton {
+     private static final Singleton singleton = new Singleton();        
+     //限制产生多个对象
+     private Singleton(){
+     }
+     //通过该方法获得实例对象
+     public static Singleton getSingleton(){
+             return singleton;
+     }  
+     //类中其他方法，尽量是static
+     public static void doSomething(){
+     }
+}</pre>
+</body></html>

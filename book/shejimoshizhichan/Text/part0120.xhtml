@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" style="font-size:1.250rem;"><head>
+  <link href="../Styles/style0001.css" rel="stylesheet" type="text/css"/>
+
+  <title></title>
+</head><body>
+  <h3 class="p3" id="sigil_toc_id_145">26.2 状态模式的定义</h3>
+
+  <p class="ziti">上面的例子中多次提到状态，本节讲的就是状态模式，什么是状态模式呢？其定义如下：</p>
+
+  <p class="ziti">Allow an object to alter its behavior when its internal state changes.The object will appear to change its class.（当一个对象内在状态改变时允许其改变行为，这个对象看起来像改变了其类。）</p>
+
+  <p class="ziti">状态模式的核心是封装，状态的变更引起了行为的变更，从外部看起来就好像这个对象对应的类发生了改变一样。状态模式的通用类图如图26-5所示。</p>
+
+  <p class="pic"><img alt="" src="../Images/image00491.jpeg"/></p>
+
+  <p class="middle-img">图26-5 状态模式通用类图</p>
+
+  <p class="ziti">我们先来看看状态模式中的3个角色。</p>
+
+  <p class="ziti">● State——抽象状态角色</p>
+
+  <p class="ziti">接口或抽象类，负责对象状态定义，并且封装环境角色以实现状态切换。</p>
+
+  <p class="ziti">● ConcreteState——具体状态角色</p>
+
+  <p class="ziti">每一个具体状态必须完成两个职责：本状态的行为管理以及趋向状态处理，通俗地说，就是本状态下要做的事情，以及本状态如何过渡到其他状态。</p>
+
+  <p class="ziti">● Context——环境角色</p>
+
+  <p class="ziti">定义客户端需要的接口，并且负责具体状态的切换。</p>
+
+  <p class="ziti">状态模式相对来说比较复杂，它提供了一种对物质运动的另一个观察视角，通过状态变更促使行为的变化，就类似水的状态变更一样，一碗水的初始状态是液态，通过加热转变为气态，状态的改变同时也引起体积的扩大，然后就产生了一个新的行为：鸣笛或顶起壶盖，瓦特就是这么发明蒸汽机的。我们再来看看状态模式的通用源代码，首先来看抽象环境角色，如代码清单26-14所示。</p>
+
+  <p class="ziti">代码清单26-14 抽象环境角色</p>
+  <pre>public abstract class State {
+     //定义一个环境角色，提供子类访问
+     protected Context context;
+     //设置环境角色
+     public void setContext(Context _context){
+             this.context = _context;
+     }
+     //行为1
+     public abstract void handle1();
+     //行为2
+     public abstract void handle2();
+}</pre>
+
+  <p class="ziti">抽象环境中声明一个环境角色，提供各个状态类自行访问，并且提供所有状态的抽象行为，由各个实现类实现。具体环境角色如代码清单26-15所示。</p>
+
+  <p class="ziti">代码清单26-15 环境角色</p>
+  <pre>public class ConcreteState1 extends State {
+     @Override
+     public void handle1() {
+             //本状态下必须处理的逻辑
+     }
+     @Override
+     public void handle2() {
+             //设置当前状态为stat2
+             super.context.setCurrentState(Context.STATE2);
+             //过渡到state2状态，由Context实现
+             super.context.handle2();
+     }
+}
+public class ConcreteState2 extends State {
+     @Override
+     public void handle1() {          
+             //设置当前状态为state1
+             super.context.setCurrentState(Context.STATE1);
+             //过渡到state1状态，由Context实现
+             super.context.handle1();
+     }
+     @Override
+     public void handle2() {
+             //本状态下必须处理的逻辑
+     }
+}</pre>
+
+  <p class="ziti">具体环境角色有两个职责：处理本状态必须完成的任务，决定是否可以过渡到其他状态。我们再来看环境角色，如代码清单26-16所示。</p>
+
+  <p class="ziti">代码清单26-16 具体环境角色</p>
+  <pre>public class Context {
+     //定义状态
+     public final static State STATE1 = new ConcreteState1();
+     public final static State STATE2 = new ConcreteState2();
+     //当前状态
+     private State CurrentState;
+     //获得当前状态
+     public State getCurrentState() {
+             return CurrentState;
+     }
+     //设置当前状态
+     public void setCurrentState(State currentState) {
+             this.CurrentState = currentState;
+             //切换状态
+             this.CurrentState.setContext(this);
+     }
+     //行为委托
+     public void handle1(){
+             this.CurrentState.handle1();
+     }
+     public void handle2(){
+             this.CurrentState.handle2();
+     }
+}</pre>
+
+  <p class="ziti">环境角色有两个不成文的约束：</p>
+
+  <p class="ziti">● 把状态对象声明为静态常量，有几个状态对象就声明几个静态常量。</p>
+
+  <p class="ziti">● 环境角色具有状态抽象角色定义的所有行为，具体执行使用委托方式。</p>
+
+  <p class="ziti">我们再来看场景类如何执行，如代码清单26-17所示。</p>
+
+  <p class="ziti">代码清单26-17 具体环境角色</p>
+  <pre>public class Client {
+     public static void main(String[] args) {
+             //定义环境角色
+             Context context = new Context();
+             //初始化状态
+             context.setCurrentState(new ConcreteState1());
+             //行为执行
+             context.handle1();
+             context.handle2();
+     }
+}</pre>
+
+  <p class="ziti">看到没？我们已经隐藏了状态的变化过程，它的切换引起了行为的变化。对外来说，我们只看到行为的发生改变，而不用知道是状态变化引起的。</p>
+</body></html>
